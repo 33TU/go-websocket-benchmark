@@ -88,6 +88,6 @@ func (h *Handler) OnOpen(c *gws.Conn) {
 }
 
 func (h *Handler) OnMessage(c *gws.Conn, message *gws.Message) {
-	_ = c.WriteAsync(message.Opcode, message.Bytes())
-	_ = message.Close()
+	// gws 1.10: WriteAsync writes later, so the message is released from its callback.
+	c.WriteAsync(message.Opcode, message.Bytes(), func(error) { _ = message.Close() })
 }
