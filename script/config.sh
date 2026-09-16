@@ -6,6 +6,7 @@ BenchTime=(2000000)
 SleepTime=5
 
 frameworks=(
+    "ews"
     "fasthttp"
     "gobwas"
     "quickws"
