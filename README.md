@@ -1,4 +1,6 @@
 # go-websocket-benchmark
+
+This fork adds [ews](https://github.com/33TU/ews) as a framework and tracks current library versions; results are in [results/](results/).
 - support 1m-connections client
 
 ## before running the test
