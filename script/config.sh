@@ -7,6 +7,7 @@ SleepTime=5
 
 frameworks=(
     "ews"
+    "ews_sync"
     "fasthttp"
     "gobwas"
     "quickws"
