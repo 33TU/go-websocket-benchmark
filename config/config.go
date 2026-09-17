@@ -124,7 +124,7 @@ func GetFrameworkPid(framework, ip string) (int, error) {
 		return -1, err
 	}
 	pidPort := ports[len(ports)-1]
-	if framework == Gws || framework == Ews || framework == EwsSync {
+	if framework == Gws || framework == GwsStd || framework == Ews || framework == EwsSync {
 		pidPort++
 	}
 	serverAddr := fmt.Sprintf("http://%v:%v/pid", ip, pidPort)

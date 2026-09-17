@@ -35,6 +35,11 @@ func main() {
 		logging.Fatalf("GetFrameworkBenchmarkAddrs(%v) failed: %v", config.GwsStd, err)
 	}
 	lns := startServers(addrs)
+	pidAddr, err := config.GetFrameworkPidServerAddrs(config.GwsStd)
+	if err != nil {
+		logging.Fatalf("GetFrameworkPidServerAddrs(%v) failed: %v", config.GwsStd, err)
+	}
+	lns = append(lns, servePid(pidAddr))
 
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
@@ -64,6 +69,19 @@ func startServers(addrs []string) []net.Listener {
 		}()
 	}
 	return lns
+}
+
+// servePid answers the benchmark's pid request over plain HTTP on its own
+// port, so the WebSocket ports can be TLS.
+func servePid(addr string) net.Listener {
+	mux := &http.ServeMux{}
+	mux.HandleFunc("/pid", onServerPid)
+	ln, err := frameworks.ListenPlain("tcp", addr)
+	if err != nil {
+		logging.Fatalf("Listen failed: %v", err)
+	}
+	go func() { logging.Printf("pid server exit: %v", (&http.Server{Handler: mux}).Serve(ln)) }()
+	return ln
 }
 
 func onServerPid(w http.ResponseWriter, r *http.Request) {
