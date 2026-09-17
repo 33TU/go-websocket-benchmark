@@ -16,6 +16,11 @@ sonic bumped so hertz builds under Go 1.27.
 - [ews against gws, 10k connections, desktop](results/ews-vs-gws-2026-09-17-9950x3d.md):
   Ryzen 9 9950X3D. Both take the whole load; ews does it on 193 percent CPU
   against 347, the same 1.8 ratio.
+- [ews against gws over TLS, 10k connections, desktop](results/tls-2026-09-17-9950x3d.md):
+  servers and client started with `-tls`, echo only. TLS takes a quarter
+  off everyone's echo rate and levels the memory column; ews and gws tie
+  within three percent at 1 KiB and ews moves 256 KiB messages on 185
+  percent CPU against gws's 297.
 - [The full suite, 10k and 30k connections, desktop](results/suite-2026-09-17-9950x3d.md):
   every framework in `script/config.sh`, echo and rate, plus echo cells at
   256 KiB payloads with 1,000 and 10,000 connections, with the generated
@@ -35,6 +40,13 @@ difference, pin the servers and the client to separate physical cores, and
 kill the hertz servers with SIGKILL, since they ignore SIGTERM.
 
 - support 1m-connections client
+
+## TLS
+
+`./script/build.sh` writes a self-signed certificate to `output/`. Start a
+server with `-tls` and the client with `-tls`; the client dials `wss` and
+skips verification. Wired for gws, gws_std, ews and ews_sync; the rate test
+does not run under TLS, see the results file.
 
 ## before running the test
 - make sure setting the correct system env, for example:
