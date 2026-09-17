@@ -57,7 +57,7 @@ sysctl -w net.ipv4.tcp_tw_reuse=1
 
 run:
 ```sh
-git clone https://github.com/lesismal/go-websocket-benchmark.git
+git clone https://github.com/33TU/go-websocket-benchmark.git
 cd go-websocket-benchmark
 ./script/1m_conns_benchmark.sh
 ```
@@ -112,7 +112,7 @@ TP99       : 1.35s
 ## benchmark for all frameworks
 run:
 ```sh
-git clone https://github.com/lesismal/go-websocket-benchmark.git
+git clone https://github.com/33TU/go-websocket-benchmark.git
 cd go-websocket-benchmark
 ./script/benchmarkN.sh
 
