@@ -1,6 +1,34 @@
 # go-websocket-benchmark
 
-This fork adds [ews](https://github.com/33TU/ews) as a framework and tracks current library versions; results are in [results/](results/).
+This fork adds [ews](https://github.com/33TU/ews) as a framework, in two
+shapes, and tracks current library versions: gws v1.10.2, gorilla v1.5.3,
+sonic bumped so hertz builds under Go 1.27.
+
+- `ews`: `transport.Server` without net/http, echo through a `Queue`; the
+  counterpart of gws with `WriteAsync`.
+- `ews_sync`: net/http, synchronous `Write`; the counterpart of `gws_std`.
+
+## Results
+
+- [ews against gws, 10k connections, laptop](results/ews-vs-gws-2026-09-16.md):
+  i9-13900H. Echo ties; in the rate test ews takes the whole offered load
+  with no drops at 1.8 times gws's echoes per CPU point, while gws drops.
+- [ews against gws, 10k connections, desktop](results/ews-vs-gws-2026-09-17-9950x3d.md):
+  Ryzen 9 9950X3D. Both take the whole load; ews does it on 193 percent CPU
+  against 347, the same 1.8 ratio.
+- [The full suite, 10k and 30k connections, desktop](results/suite-2026-09-17-9950x3d.md):
+  every framework in `script/config.sh`, echo and rate, with the generated
+  reports in [suite-2026-09-17-9950x3d/](results/suite-2026-09-17-9950x3d/).
+
+Two things learned running it. The echo test keeps one request in flight
+per connection, so its TPS is connections divided by round trip and every
+good library ties on it; the differences are in the rate test, where the
+Queue coalesces a backlog into one writev. And the machine can sit in a
+slower state for reasons that do not show in load: run the same server
+first and last as a drift check before reading a difference as a library
+difference, pin the servers and the client to separate physical cores, and
+kill the hertz servers with SIGKILL, since they ignore SIGTERM.
+
 - support 1m-connections client
 
 ## before running the test
