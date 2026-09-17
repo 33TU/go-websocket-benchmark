@@ -32,6 +32,11 @@ func main() {
 		logging.Fatalf("GetFrameworkBenchmarkAddrs(%v) failed: %v", config.Ews, err)
 	}
 	lns := startServers(addrs)
+	pidAddr, err := config.GetFrameworkPidServerAddrs(config.Ews)
+	if err != nil {
+		logging.Fatalf("GetFrameworkPidServerAddrs(%v) failed: %v", config.Ews, err)
+	}
+	lns = append(lns, servePid(pidAddr))
 
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
@@ -42,9 +47,7 @@ func main() {
 }
 
 // startServers runs a transport.Server, ews's accept loop without net/http,
-// on every port but the last. The benchmark reads the pid over HTTP from the
-// last port, so that one is served by net/http with the WebSocket path
-// handed to transport.Upgrade.
+// on every WebSocket port.
 func startServers(addrs []string) []net.Listener {
 	server := &transport.Server{
 		Handler: func(conn net.Conn, res handshake.Result, _ *transport.Request) {
@@ -53,30 +56,28 @@ func startServers(addrs []string) []net.Listener {
 		},
 	}
 	lns := make([]net.Listener, 0, len(addrs))
-	for i, addr := range addrs {
+	for _, addr := range addrs {
 		ln, err := frameworks.Listen("tcp", addr)
 		if err != nil {
 			logging.Fatalf("Listen failed: %v", err)
 		}
 		lns = append(lns, ln)
-		if i == len(addrs)-1 {
-			mux := &http.ServeMux{}
-			mux.HandleFunc("/pid", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintf(w, "%d", os.Getpid()) })
-			mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-				conn, res, err := transport.Upgrade(w, r, handshake.Options{})
-				if err != nil {
-					return
-				}
-				defer conn.Close()
-				frameworks.SetNoDelay(conn, *nodelay)
-				echo(conn, res)
-			})
-			go func() { logging.Printf("server exit: %v", (&http.Server{Handler: mux}).Serve(ln)) }()
-			continue
-		}
 		go func() { logging.Printf("server exit: %v", server.Serve(ln)) }()
 	}
 	return lns
+}
+
+// servePid answers the benchmark's pid request over plain HTTP on its own
+// port, as gws does, so the WebSocket ports can be TLS.
+func servePid(addr string) net.Listener {
+	mux := &http.ServeMux{}
+	mux.HandleFunc("/pid", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintf(w, "%d", os.Getpid()) })
+	ln, err := frameworks.ListenPlain("tcp", addr)
+	if err != nil {
+		logging.Fatalf("Listen failed: %v", err)
+	}
+	go func() { logging.Printf("pid server exit: %v", (&http.Server{Handler: mux}).Serve(ln)) }()
+	return ln
 }
 
 // echo relays every message back through the connection's queue, the ews

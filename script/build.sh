@@ -8,6 +8,10 @@ mkdir -p ./output/bin
 mkdir -p ./output/log
 mkdir -p ./output/report
 
+echo "generate certificate ..."
+go run ./cmd/gencert ./output
+echo "generate certificate done"
+
 # build
 for f in ${frameworks[@]}; do
     echo "build ${f} ..."

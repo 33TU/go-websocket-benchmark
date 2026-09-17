@@ -27,6 +27,9 @@ const (
 	EwsSync            = "ews_sync"
 )
 
+// Scheme is the WebSocket URL scheme the client dials, ws or wss.
+var Scheme = "ws"
+
 var Ports = map[string]string{
 	Fasthttp:           "10001:10050",
 	Gobwas:             "11001:11050",
@@ -110,7 +113,7 @@ func GetFrameworkBenchmarkAddrs(framework, ip string) ([]string, error) {
 	}
 	addrs := make([]string, 0, len(ports))
 	for _, port := range ports {
-		addrs = append(addrs, fmt.Sprintf("ws://%s:%d/ws", ip, port))
+		addrs = append(addrs, fmt.Sprintf("%s://%s:%d/ws", Scheme, ip, port))
 	}
 	return addrs, nil
 }
@@ -121,7 +124,7 @@ func GetFrameworkPid(framework, ip string) (int, error) {
 		return -1, err
 	}
 	pidPort := ports[len(ports)-1]
-	if framework == Gws {
+	if framework == Gws || framework == Ews || framework == EwsSync {
 		pidPort++
 	}
 	serverAddr := fmt.Sprintf("http://%v:%v/pid", ip, pidPort)

@@ -41,7 +41,7 @@ func main() {
 	go func() {
 		mux := &http.ServeMux{}
 		mux.HandleFunc("/pid", onServerPid)
-		ln, err := frameworks.Listen("tcp", pidServerAddr)
+		ln, err := frameworks.ListenPlain("tcp", pidServerAddr)
 		if err != nil {
 			logging.Fatalf("Listen failed: %v", err)
 		}
