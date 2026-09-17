@@ -17,8 +17,11 @@ sonic bumped so hertz builds under Go 1.27.
   Ryzen 9 9950X3D. Both take the whole load; ews does it on 193 percent CPU
   against 347, the same 1.8 ratio.
 - [The full suite, 10k and 30k connections, desktop](results/suite-2026-09-17-9950x3d.md):
-  every framework in `script/config.sh`, echo and rate, with the generated
-  reports in [suite-2026-09-17-9950x3d/](results/suite-2026-09-17-9950x3d/).
+  every framework in `script/config.sh`, echo and rate, plus an echo cell
+  at 256 KiB payloads, with the generated reports in
+  [suite-2026-09-17-9950x3d/](results/suite-2026-09-17-9950x3d/). At 256 KiB
+  every server is bound by loopback bandwidth and the difference is CPU:
+  ews moves the same bytes on 180 percent where gws needs 300.
 
 Two things learned running it. The echo test keeps one request in flight
 per connection, so its TPS is connections divided by round trip and every
