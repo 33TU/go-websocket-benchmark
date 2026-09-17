@@ -18,6 +18,7 @@ var (
 
 	// Client Proc
 	memLimit = flag.Int64("m", 1024*1024*1024*4, `memory limit`)
+	useTLS   = flag.Bool("tls", false, `dial wss to servers started with -tls`)
 
 	// Server Side
 	framework = flag.String("f", config.NbioStd, `framework, e.g. "gorilla"`)
@@ -72,6 +73,10 @@ func main() {
 	cs := connections.New(*framework, *ip, *numConnections)
 	cs.Concurrency = *dialConcurrency
 	cs.DialTimeout = *dialTimeout
+	cs.TLS = *useTLS
+	if *useTLS {
+		config.Scheme = "wss"
+	}
 	cs.RetryTimes = *dialRetries
 	cs.RetryInterval = *dialRetryInterval
 	cs.Run()

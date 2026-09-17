@@ -2,6 +2,7 @@ package connections
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"runtime"
 	"sync"
@@ -26,6 +27,7 @@ type Connections struct {
 	Concurrency    int
 	NumConnections int
 	DialTimeout    time.Duration
+	TLS            bool // Dial wss and skip certificate verification.
 	RetryInterval  time.Duration
 	RetryTimes     int
 	Percents       []int
@@ -222,6 +224,9 @@ begin:
 			addr := cs.serverAddrs[atomic.AddUint32(&cs.serverIdx, 1)%uint32(len(cs.serverAddrs))]
 			dialer := &websocket.Dialer{
 				HandshakeTimeout: cs.DialTimeout,
+			}
+			if cs.TLS {
+				dialer.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 			}
 			conn, _, err := dialer.Dial(addr, nil)
 			if err == nil {
