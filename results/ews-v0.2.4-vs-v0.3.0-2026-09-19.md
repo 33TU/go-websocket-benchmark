@@ -32,3 +32,23 @@ rate-test messages with no drops. The per-frame gains v0.3.0 shows in
 the Go benchmarks are nanoseconds against a microsecond syscall, so this
 is the expected result; the desktop run with the full field is the one
 to quote.
+
+## Balanced power profile
+
+The same pairs with the laptop switched from the performance profile to
+balanced, 30 seconds of rest before each pair, second pair reversed.
+
+| pair | order | version | echo TPS | echo TP99 | echo CPU | echo memory | rate EER | rate CPU | rate memory |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | first | v0.2.4 | 564,539 | 23.97ms | 429% | 135 MB | 4,963 | 401% | 199 MB |
+| 1 | second | v0.3.0 | 563,545 | 24.98ms | 427% | 137 MB | 4,876 | 408% | 213 MB |
+| 2 | first | v0.3.0 | 563,215 | 25.02ms | 426% | 135 MB | 4,879 | 408% | 201 MB |
+| 2 | second | v0.2.4 | 562,880 | 24.75ms | 427% | 132 MB | 4,833 | 411% | 198 MB |
+
+Echo TPS spreads 0.3 percent across all four runs and the rate EER 2.6
+percent, against 8 and 11 percent in the performance profile, and the
+first-runner advantage is gone. The absolute figures are lower, echo by 5
+to 10 percent and the rate EER by about 30 percent, because the sustained
+clock is lower and the same messages cost more CPU time (400 percent
+against 300). For comparing two builds on this laptop, balanced is the
+profile to use; for absolute numbers, the pinned desktop run.
