@@ -52,3 +52,21 @@ to 10 percent and the rate EER by about 30 percent, because the sustained
 clock is lower and the same messages cost more CPU time (400 percent
 against 300). For comparing two builds on this laptop, balanced is the
 profile to use; for absolute numbers, the pinned desktop run.
+
+## v0.4.0, same method
+
+v0.4.0 adds events.Dial, Config.UserData and the doc pass on top of v0.3.0;
+nothing on the message path changed. Balanced profile, two pairs, the
+second reversed, 30 seconds of rest before each pair.
+
+| pair | order | version | echo TPS | echo TP99 | echo CPU | echo memory | rate EER | rate CPU | rate memory |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | first | v0.2.4 | 553,019 | 25.20ms | 427% | 141 MB | 4,926 | 404% | 339 MB |
+| 1 | second | v0.4.0 | 558,287 | 24.97ms | 428% | 139 MB | 4,909 | 405% | 213 MB |
+| 2 | first | v0.4.0 | 556,973 | 25.56ms | 430% | 137 MB | 4,875 | 408% | 203 MB |
+| 2 | second | v0.2.4 | 554,925 | 25.04ms | 427% | 141 MB | 4,826 | 412% | 235 MB |
+
+Echo TPS within 1 percent across all four runs and rate EER within 2,
+with no order effect: the same result as v0.3.0. The rate-test memory
+average is the sampled column that swings with GC timing, as the 339 MB
+outlier for the same v0.2.4 binary that measured 199 MB earlier shows.
