@@ -9,6 +9,10 @@ dmitri.shuralyov.com/state v0.0.0-20180228185332-28bcc343414c/go.mod h1:0PRwlb0D
 git.apache.org/thrift.git v0.0.0-20180902110319-2566ecd5d999/go.mod h1:fPE2ZNJGynbRyZ4dJvy6G277gSllfV2HJqblrnkyeyg=
 github.com/33TU/ews v0.2.0 h1:iZB11HLc5k789aF6M0mHNIVHr38MJzl33ICYQaxs8ec=
 github.com/33TU/ews v0.2.0/go.mod h1:i5/QthZZLNB8vvUOcLbgCZMA2MroeN6B2UPmWAwpMs4=
+github.com/33TU/ews v0.2.4 h1:ojMZkS0D0vjYL96rYtNV22RMIiJ9RrwGKmrFl61tNyg=
+github.com/33TU/ews v0.2.4/go.mod h1:i5/QthZZLNB8vvUOcLbgCZMA2MroeN6B2UPmWAwpMs4=
+github.com/33TU/ews v0.3.0 h1:LoipE/Nl/WUxQQTOc5lz44LVpUwCnPWdkekWS8T1Ig8=
+github.com/33TU/ews v0.3.0/go.mod h1:i5/QthZZLNB8vvUOcLbgCZMA2MroeN6B2UPmWAwpMs4=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/andybalholm/brotli v1.0.5 h1:8uQZIdzKmjc/iuPu7O2ioW48L81FgatrcpfFmiq/cCs=
 github.com/andybalholm/brotli v1.0.5/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
