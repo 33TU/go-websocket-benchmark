@@ -70,3 +70,21 @@ Echo TPS within 1 percent across all four runs and rate EER within 2,
 with no order effect: the same result as v0.3.0. The rate-test memory
 average is the sampled column that swings with GC timing, as the 339 MB
 outlier for the same v0.2.4 binary that measured 199 MB earlier shows.
+
+## gws v1.10.2 against ews v0.4.0, same method
+
+Two pairs, balanced profile, the second reversed.
+
+| pair | order | server | echo TPS | echo TP99 | echo CPU | echo memory | rate EER | rate CPU | rate memory | dropped |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | first | gws | 547,334 | 26.25ms | 395% | 169 MB | 3,225 | 379% | 234 MB | 0 |
+| 1 | second | ews v0.4.0 | 548,675 | 24.37ms | 393% | 143 MB | 4,900 | 406% | 201 MB | 0 |
+| 2 | first | ews v0.4.0 | 556,050 | 24.82ms | 428% | 133 MB | 4,875 | 408% | 259 MB | 0 |
+| 2 | second | gws | 544,531 | 26.42ms | 393% | 173 MB | 3,299 | 394% | 235 MB | 223,358 |
+
+Echo ties, as always. ews holds 20 percent less memory during the echo
+test. In the rate test ews answers 1.5 times as many echoes per CPU point
+and took every offered message in both runs; gws dropped 223,358 of 19.9M
+in its second run. The ratio is 1.5 here against 1.8 on the desktop
+because the balanced profile's lower clock leaves less headroom for the
+coalescing to convert into throughput.
