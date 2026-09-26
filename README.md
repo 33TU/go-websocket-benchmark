@@ -23,9 +23,11 @@ gorilla v1.5.3, sonic bumped so hertz builds under Go 1.27.
   percent CPU against gws's 297.
 - [ews against gws over TLS with the rate test, 10k connections, desktop](results/tls-2026-09-27-9950x3d.md):
   the first TLS run with the rate phase, which the client can now reach
-  under TLS. Only ews takes the whole offered load with nothing dropped,
-  on 341 percent CPU against 445; gws and ews_sync are throttled by the
-  client and drop half a percent. Echo matches the 2026-09-17 run.
+  under TLS. All three serve TLS; the difference is how much load they
+  take. ews answers the whole 19.9M offered messages on 341 percent CPU,
+  while gws and ews_sync sit at about 445 and fall far enough behind that
+  the client stops writing to them, which shows as half a percent not
+  delivered. Echo matches the 2026-09-17 run.
 - [The full suite, 10k and 30k connections, desktop](results/suite-2026-09-17-9950x3d.md):
   every framework in `script/config.sh`, echo and rate, plus echo cells at
   256 KiB payloads with 1,000 and 10,000 connections, with the generated
