@@ -1,8 +1,9 @@
 # go-websocket-benchmark
 
 This fork adds [ews](https://github.com/33TU/ews) as a framework, in two
-shapes, and tracks current library versions: ews v0.4.1, gws v1.10.2,
-gorilla v1.5.3, sonic bumped so hertz builds under Go 1.27.
+shapes, and tracks current library versions: ews at commit 05cd001 (the
+merge of PR #11), gws v1.10.2, gorilla v1.5.3, sonic bumped so hertz builds
+under Go 1.27.
 
 - `ews`: `transport.Server` without net/http, echo through a `Queue`; the
   counterpart of gws with `WriteAsync`.
@@ -35,6 +36,10 @@ gorilla v1.5.3, sonic bumped so hertz builds under Go 1.27.
   unchanged, the same 1.8 ratio; at 256 KiB ews moves the same bytes on 156
   percent CPU instead of 175 and ews_sync on 135 instead of 146, with ews's
   median round trip down from 10.1 to 8.5 ms.
+- [ews against gws after ews PR #11, 10k connections, desktop](results/ews-vs-gws-2026-09-27-9950x3d.md):
+  ews at commit 05cd001, fragmented-assembly reservation and pool handles,
+  which this harness's single-frame messages never reach; every figure
+  within a run's spread of the day before, the same 1.8 ratio.
 
 Two things learned running it. The echo test keeps one request in flight
 per connection, so its TPS is connections divided by round trip and every
