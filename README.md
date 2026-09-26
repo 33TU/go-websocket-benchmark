@@ -56,6 +56,23 @@ kill the hertz servers with SIGKILL, since they ignore SIGTERM.
 
 - support 1m-connections client
 
+## Socket buffers
+
+`-sndbuf` and `-rcvbuf` on a server set `SO_SNDBUF` and `SO_RCVBUF` on its
+listeners, which every accepted connection inherits, so a size applies to a
+whole framework without touching its code. Both default to off, every
+framework that listens through `frameworks.Listen` takes them on the same
+terms, and a comparison that uses them has to give every server the same
+value or it measures the flag rather than the library.
+
+They change nothing in these tests, which is worth knowing before reaching
+for them. Capping both at 128 or 256 KiB on ews and gws moved neither
+server at 1 KiB or at 256 KiB over 10,000 connections. The echo test holds
+one request in flight per connection, so a connection is never backlogged
+past a buffer's worth, autotuning never grows the buffer, and a cap has
+nothing to take away. The size matters for fan-out and streaming, where one
+connection carries more than a buffer holds at once.
+
 ## TLS
 
 `./script/build.sh` writes a self-signed certificate to `output/`. Start a
