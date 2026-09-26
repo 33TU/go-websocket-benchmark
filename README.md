@@ -21,6 +21,11 @@ gorilla v1.5.3, sonic bumped so hertz builds under Go 1.27.
   off everyone's echo rate and levels the memory column; ews and gws tie
   within three percent at 1 KiB and ews moves 256 KiB messages on 185
   percent CPU against gws's 297.
+- [ews against gws over TLS with the rate test, 10k connections, desktop](results/tls-2026-09-27-9950x3d.md):
+  the first TLS run with the rate phase, which the client can now reach
+  under TLS. Only ews takes the whole offered load with nothing dropped,
+  on 341 percent CPU against 445; gws and ews_sync are throttled by the
+  client and drop half a percent. Echo matches the 2026-09-17 run.
 - [The full suite, 10k and 30k connections, desktop](results/suite-2026-09-17-9950x3d.md):
   every framework in `script/config.sh`, echo and rate, plus echo cells at
   256 KiB payloads with 1,000 and 10,000 connections, with the generated
@@ -55,8 +60,15 @@ kill the hertz servers with SIGKILL, since they ignore SIGTERM.
 
 `./script/build.sh` writes a self-signed certificate to `output/`. Start a
 server with `-tls` and the client with `-tls`; the client dials `wss` and
-skips verification. Wired for gws, gws_std, ews and ews_sync; the rate test
-does not run under TLS, see the results file.
+skips verification. Wired for gws, gws_std, ews and ews_sync.
+
+Echo and rate both run under TLS. The rate phase writes pre-framed batches
+to the connection itself and counts replies in a handler, so it hands every
+connection to nbio's poller, and a `crypto/tls` connection has no descriptor
+to hand it. Under TLS the client therefore redials those connections through
+nbio's own websocket dialer, which wraps a non-blocking connection in llib's
+TLS, between the echo and rate phases and outside both timed windows. The
+plain path is untouched.
 
 ## before running the test
 - make sure setting the correct system env, for example:

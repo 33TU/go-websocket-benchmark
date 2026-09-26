@@ -14,6 +14,7 @@ import (
 	"go-websocket-benchmark/mwsbench/report"
 
 	"github.com/gorilla/websocket"
+	llibtls "github.com/lesismal/llib/std/crypto/tls"
 	"github.com/lesismal/nbio"
 	nblog "github.com/lesismal/nbio/logging"
 	"github.com/lesismal/nbio/nbhttp"
@@ -96,7 +97,21 @@ func (cs *Connections) Conns() map[*websocket.Conn]struct{} {
 	return cs.connsMap
 }
 
+// NBConns hands the connections to the nbio poller, the shape BenchRate
+// needs: it writes pre-framed batches to the conn itself and counts replies
+// from a handler rather than a read loop per connection.
+//
+// A plain connection is adopted as it is, since the poller can take its
+// file descriptor. A TLS connection cannot be adopted: crypto/tls holds the
+// record state in user space and gives out no usable descriptor. Those are
+// redialed through nbio's own dialer, which wraps a non-blocking conn in
+// llib's TLS and leaves the TLS conn as the one BenchRate writes to, so the
+// batches are encrypted on the way out.
 func (cs *Connections) NBConns() map[*nbws.Conn]struct{} {
+	if cs.TLS {
+		return cs.redialNB()
+	}
+
 	conns := map[*nbws.Conn]struct{}{}
 	for c := range cs.connsMap {
 		nbc, err := cs.Engine.AddConn(c.UnderlyingConn())
@@ -114,6 +129,74 @@ func (cs *Connections) NBConns() map[*nbws.Conn]struct{} {
 		conns[nbwsc] = struct{}{}
 	}
 	cs.connsMap = nil
+	return conns
+}
+
+// redialNB closes the handshake connections and dials the same number again
+// through nbio, for the TLS rate test. The echo test is done with them by
+// now, and holding both sets would double what the server carries while the
+// rate test measures its CPU.
+func (cs *Connections) redialNB() map[*nbws.Conn]struct{} {
+	for c := range cs.connsMap {
+		c.Close()
+	}
+	cs.connsMap = nil
+
+	addrs, err := config.GetFrameworkBenchmarkAddrs(cs.Framework, cs.Ip)
+	if err != nil {
+		logging.Fatalf("GetFrameworkBenchmarkAddrs(%v) failed: %v", cs.Framework, err)
+	}
+
+	logging.Printf("BenchRate redialing %v TLS connections ...", cs.NumConnections)
+	var (
+		mux      sync.Mutex
+		wg       sync.WaitGroup
+		conns    = map[*nbws.Conn]struct{}{}
+		next     uint32
+		failed   uint32
+		tlsConf  = &llibtls.Config{InsecureSkipVerify: true}
+		requests = make(chan struct{}, cs.NumConnections)
+	)
+	for i := 0; i < cs.NumConnections; i++ {
+		requests <- struct{}{}
+	}
+	close(requests)
+
+	for i := 0; i < cs.Concurrency; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			dialer := &nbws.Dialer{
+				Engine:          cs.Engine,
+				Upgrader:        cs.Upgrader,
+				DialTimeout:     cs.DialTimeout,
+				TLSClientConfig: tlsConf,
+			}
+			for range requests {
+				for j := 0; j < cs.RetryTimes; j++ {
+					addr := addrs[atomic.AddUint32(&next, 1)%uint32(len(addrs))]
+					c, _, err := dialer.Dial(addr, nil)
+					if err == nil {
+						mux.Lock()
+						conns[c] = struct{}{}
+						mux.Unlock()
+						break
+					}
+					if j == cs.RetryTimes-1 {
+						atomic.AddUint32(&failed, 1)
+						logging.Printf("BenchRate redial failed: %v", err)
+					}
+					time.Sleep(cs.RetryInterval)
+				}
+			}
+		}()
+	}
+	wg.Wait()
+
+	logging.Printf("BenchRate redialed: %v Success, %v Failed", len(conns), failed)
+	if len(conns) == 0 {
+		logging.Fatalf("BenchRate redial: no connection established")
+	}
 	return conns
 }
 

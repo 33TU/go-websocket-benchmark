@@ -12,6 +12,7 @@ require (
 	github.com/gobwas/ws v1.2.1
 	github.com/gorilla/websocket v1.5.3
 	github.com/hertz-contrib/websocket v0.0.1
+	github.com/lesismal/llib v1.1.12
 	github.com/lesismal/nbio v1.3.17-0.20230614094246-14330a308627
 	github.com/lesismal/perf v0.0.0-20230606082148-9c91a5b8290c
 	github.com/libp2p/go-reuseport v0.3.0
@@ -39,7 +40,6 @@ require (
 	github.com/henrylee2cn/goutil v0.0.0-20210127050712-89660552f6f8 // indirect
 	github.com/klauspost/compress v1.20.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.9 // indirect
-	github.com/lesismal/llib v1.1.12 // indirect
 	github.com/nyaruka/phonenumbers v1.0.55 // indirect
 	github.com/savsgio/gotils v0.0.0-20230208104028-c358bd845dee // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
