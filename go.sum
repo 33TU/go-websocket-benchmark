@@ -7,8 +7,8 @@ dmitri.shuralyov.com/html/belt v0.0.0-20180602232347-f7d459c86be0/go.mod h1:JLBr
 dmitri.shuralyov.com/service/change v0.0.0-20181023043359-a85b471d5412/go.mod h1:a1inKt/atXimZ4Mv927x+r7UpyzRUf4emIoiiSC2TN4=
 dmitri.shuralyov.com/state v0.0.0-20180228185332-28bcc343414c/go.mod h1:0PRwlb0D6DFvNNtx+9ybjezNCa8XF0xaYcETyp6rHWU=
 git.apache.org/thrift.git v0.0.0-20180902110319-2566ecd5d999/go.mod h1:fPE2ZNJGynbRyZ4dJvy6G277gSllfV2HJqblrnkyeyg=
-github.com/33TU/ews v0.4.1-0.20260926183404-c1f010d28b9e h1:mr6Lay/B+PfkhmGueSgfkBTKDGBdfqNxCc2r0RDqZAs=
-github.com/33TU/ews v0.4.1-0.20260926183404-c1f010d28b9e/go.mod h1:i5/QthZZLNB8vvUOcLbgCZMA2MroeN6B2UPmWAwpMs4=
+github.com/33TU/ews v0.4.1 h1:P8ncHPWWvzUGirFlqXCCpvVruFIScWANLZ09wwIt+nY=
+github.com/33TU/ews v0.4.1/go.mod h1:i5/QthZZLNB8vvUOcLbgCZMA2MroeN6B2UPmWAwpMs4=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/andybalholm/brotli v1.0.5 h1:8uQZIdzKmjc/iuPu7O2ioW48L81FgatrcpfFmiq/cCs=
 github.com/andybalholm/brotli v1.0.5/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
