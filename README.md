@@ -1,9 +1,8 @@
 # go-websocket-benchmark
 
 This fork adds [ews](https://github.com/33TU/ews) as a framework, in two
-shapes, and tracks current library versions: ews at commit 05cd001 (the
-merge of PR #11), gws v1.10.2, gorilla v1.5.3, sonic bumped so hertz builds
-under Go 1.27.
+shapes, and tracks current library versions: ews v0.4.2, gws v1.10.2,
+gorilla v1.5.3, sonic bumped so hertz builds under Go 1.27.
 
 - `ews`: `transport.Server` without net/http, echo through a `Queue`; the
   counterpart of gws with `WriteAsync`.
